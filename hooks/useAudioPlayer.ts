@@ -1,13 +1,19 @@
 "use client";
 import { useRef, useState, useCallback } from "react";
+import { playSynth, SYNTH_PROFILES } from "@/lib/synthSounds";
 
 export function useAudioPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const currentIdRef = useRef<string | null>(null);
+  const fileMissingRef = useRef(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [usingFallback, setUsingFallback] = useState(false);
   const isMutedRef = useRef(false);
 
-  const loadSound = useCallback((src: string) => {
+  const loadSound = useCallback((id: string, src: string) => {
+    currentIdRef.current = id;
+    fileMissingRef.current = false;
+    setUsingFallback(false);
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.src = "";
@@ -15,30 +21,41 @@ export function useAudioPlayer() {
     const audio = new Audio(src);
     audio.muted = isMutedRef.current;
     audio.preload = "auto";
-    audio.addEventListener("error", () => setHasError(true));
-    audio.addEventListener("canplaythrough", () => setHasError(false));
+    audio.addEventListener("error", () => {
+      fileMissingRef.current = true;
+      setUsingFallback(!!SYNTH_PROFILES[id]);
+    });
     audioRef.current = audio;
   }, []);
 
   const play = useCallback(() => {
+    if (fileMissingRef.current && currentIdRef.current) {
+      playSynth(currentIdRef.current, isMutedRef.current);
+      return;
+    }
     if (!audioRef.current) return;
     audioRef.current.currentTime = 0;
     audioRef.current.play().catch(() => {
-      // Browser may block autoplay before user gesture — silent fail
+      if (currentIdRef.current) playSynth(currentIdRef.current, isMutedRef.current);
     });
   }, []);
 
-  // Preview always plays regardless of mute (user explicitly asked to hear it)
   const preview = useCallback(() => {
+    if (fileMissingRef.current && currentIdRef.current) {
+      playSynth(currentIdRef.current, false); // preview ignores mute
+      return;
+    }
     if (!audioRef.current) return;
-    const prev = audioRef.current.muted;
+    const prevMute = audioRef.current.muted;
     audioRef.current.muted = false;
     audioRef.current.currentTime = 0;
     audioRef.current
       .play()
-      .catch(() => setHasError(true))
+      .catch(() => {
+        if (currentIdRef.current) playSynth(currentIdRef.current, false);
+      })
       .finally(() => {
-        if (audioRef.current) audioRef.current.muted = prev;
+        if (audioRef.current) audioRef.current.muted = prevMute;
       });
   }, []);
 
@@ -51,5 +68,5 @@ export function useAudioPlayer() {
     });
   }, []);
 
-  return { loadSound, play, preview, toggleMute, isMuted, hasError };
+  return { loadSound, play, preview, toggleMute, isMuted, usingFallback };
 }
