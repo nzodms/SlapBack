@@ -1,31 +1,47 @@
-# SlapBack — Sons
+# SlapBack — Sound files
 
-Place tes fichiers MP3 ici. Les noms doivent correspondre exactement :
+Place your MP3 files here. Names must match exactly.
 
-| Fichier                        | Son attendu                              |
-|-------------------------------|------------------------------------------|
-| `scream-short.mp3`            | Un cri court et sec                      |
-| `ouch.mp3`                    | Un "aïe" ou "ouch" cartoon               |
-| `cartoon-hit.mp3`             | Coup cartoon (type Tom & Jerry)          |
-| `slap.mp3`                    | Une gifle sèche                          |
-| `alarm.mp3`                   | Alarme courte                            |
-| `demon.mp3`                   | Grognement démoniaque                    |
-| `calm-down.mp3`               | "Calm down" / voix apaisante ironique    |
-| `click-again.mp3`             | Voix qui dit "clique encore"             |
-| `why-are-you-screaming.mp3`   | "Pourquoi tu cries ?"                   |
-| `dramatic-scream.mp3`         | Cri dramatique long                      |
+## Required files
 
-## Sources recommandées
+| File                   | Label              | Description                         |
+|------------------------|--------------------|-------------------------------------|
+| `quick-scream.mp3`     | Quick Scream       | Short piercing shriek (< 1s)        |
+| `ouch.mp3`             | Ouch               | Cartoon pain reaction (< 0.5s)      |
+| `cartoon-hit.mp3`      | Cartoon Hit        | Classic slapstick impact (< 0.5s)   |
+| `slap-impact.mp3`      | Slap Impact        | Satisfying face slap (< 0.3s)       |
+| `demon-voice.mp3`      | Demon Voice        | Deep demonic growl (0.5–1s)         |
+| `calm-down.mp3`        | Calm Down          | Passive aggressive whisper (< 1s)   |
+| `click-again.mp3`      | Click Again        | Dares you to click again (< 1s)     |
+| `angry-voice.mp3`      | Angry Voice        | Full rage mode activated (< 1s)     |
+| `dramatic-scream.mp3`  | Dramatic Scream    | Over the top reaction (0.5–1.5s)    |
+| `panic-scream.mp3`     | Panic Scream       | Unhinged panic (< 1s)               |
 
-- [Freesound.org](https://freesound.org) (Creative Commons)
-- [Mixkit.co](https://mixkit.co/free-sound-effects/) (gratuit)
-- [Zapsplat.com](https://www.zapsplat.com)
-- [ElevenLabs](https://elevenlabs.io) pour générer des voix custom
+## ⚠ If files are missing
 
-## Format
+The app works fine with or without the MP3 files.
+If a file is missing, SlapBack automatically uses a **synth fallback** (procedural
+Web Audio sound). A small "⚠ Synth" badge appears in the UI.
 
-- Format : MP3
-- Durée recommandée : 0.5s à 3s
-- Volume normalisé : -3dB peak
+## Recommended sources (free)
 
-Si un fichier est absent, SlapBack affiche une erreur propre et reste fonctionnel.
+- [Freesound.org](https://freesound.org) — Creative Commons library
+- [Mixkit.co](https://mixkit.co/free-sound-effects/) — free commercial use
+- [Zapsplat.com](https://www.zapsplat.com) — large free library
+- [ElevenLabs.io](https://elevenlabs.io) — generate custom voice reactions
+
+## Format specs
+
+- Format: **MP3** (192kbps+)
+- Duration: **< 2 seconds** for best effect
+- Peak level: **−3 dBFS** (normalize before saving)
+- Sample rate: **44100 Hz**
+
+## Adding a new sound
+
+1. Add the MP3 to this folder.
+2. Add an entry to `lib/sounds.ts`:
+   ```ts
+   { id: "my-sound", label: "My Sound", emoji: "🔥", file: "/sounds/my-sound.mp3", description: "Short description" }
+   ```
+3. Add a synth fallback to `lib/synthSounds.ts` (optional but recommended).

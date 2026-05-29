@@ -20,22 +20,18 @@ import SoundSelector from "@/components/SoundSelector";
 import TriggerSelector from "@/components/TriggerSelector";
 import RageMeter from "@/components/RageMeter";
 import ReactionStage from "@/components/ReactionStage";
+import HeroDemo from "@/components/HeroDemo";
+import TrustSection from "@/components/TrustSection";
 import InstallButton from "@/components/InstallButton";
 import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
 
 const RAGE_INCREMENT = 15;
 const RAGE_DECAY_RATE = 0.4;
-const REACTION_DURATION = 1400;
-
-const DEMO_CARDS = [
-  { icon: "🪵", action: "Tap your desk", arrow: "→", result: "scream" },
-  { icon: "⎵", action: "Press Space", arrow: "→", result: "ouch" },
-  { icon: "🖱️", action: "Spam clicks", arrow: "→", result: "angry voice" },
-];
+const REACTION_DURATION = 1500;
 
 export default function Home() {
-  const [selectedSound, setSelectedSound] = useState("scream-short");
+  const [selectedSound, setSelectedSound] = useState("quick-scream");
   const [selectedTrigger, setSelectedTrigger] = useState<TriggerType>("mic-tap");
   const [isActive, setIsActive] = useState(false);
   const [sensitivity, setSensitivity] = useState(65);
@@ -51,22 +47,18 @@ export default function Home() {
 
   const { isStandalone } = usePWAInstall();
 
-  // Mobile detection (hint, not blocking)
   useEffect(() => {
     setIsMobile(window.matchMedia("(max-width: 767px)").matches);
   }, []);
 
   // Rage decay
   useEffect(() => {
-    const id = setInterval(() => {
-      setRageLevel((prev) => Math.max(0, prev - RAGE_DECAY_RATE));
-    }, 100);
+    const id = setInterval(() => setRageLevel((p) => Math.max(0, p - RAGE_DECAY_RATE)), 100);
     return () => clearInterval(id);
   }, []);
 
   const { loadSound, play, preview, toggleMute, isMuted, usingFallback } = useAudioPlayer();
 
-  // Load whenever sound changes
   useEffect(() => {
     const sound = SOUNDS.find((s) => s.id === selectedSound);
     if (sound) loadSound(sound.id, sound.file);
@@ -74,9 +66,7 @@ export default function Home() {
 
   const fireTrigger = useCallback(() => {
     if (!isActive) return;
-
     play();
-
     setRageLevel((prev) => {
       const next = Math.min(100, prev + RAGE_INCREMENT);
       const isRageMax = next >= 100;
@@ -93,11 +83,7 @@ export default function Home() {
     });
   }, [isActive, play]);
 
-  const micDetection = useMicTapDetection({
-    sensitivity,
-    onTap: fireTrigger,
-    cooldown: 700,
-  });
+  const micDetection = useMicTapDetection({ sensitivity, onTap: fireTrigger, cooldown: 700 });
 
   const { isCapturing, startCapture, capturedKey } = useKeyboardTrigger({
     trigger: selectedTrigger,
@@ -114,18 +100,13 @@ export default function Home() {
       setIsActive(false);
     } else {
       setIsActive(true);
-      if (selectedTrigger === "mic-tap") {
-        await micDetection.start();
-      }
+      if (selectedTrigger === "mic-tap") await micDetection.start();
     }
   }, [isActive, selectedTrigger, micDetection]);
 
   const handleTriggerSelect = useCallback(
     (t: TriggerType) => {
-      if (isActive) {
-        micDetection.stop();
-        setIsActive(false);
-      }
+      if (isActive) { micDetection.stop(); setIsActive(false); }
       setSelectedTrigger(t);
     },
     [isActive, micDetection]
@@ -146,15 +127,15 @@ export default function Home() {
         isRageMax={reaction?.isRageMax ?? false}
       />
 
-      {/* NAV */}
+      {/* ── NAV ── */}
       <nav className="flex items-center justify-between px-6 py-5 max-w-5xl mx-auto">
         <span className="text-xl font-black tracking-tight">
           <span className="text-red-400">Slap</span>Back
         </span>
         <div className="hidden md:flex items-center gap-7 text-sm text-zinc-500">
+          <a href="#app" className="hover:text-white transition-colors">Try it</a>
           <a href="#install" className="hover:text-white transition-colors">Install</a>
           <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-          <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
           <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
         </div>
         {isStandalone && (
@@ -165,64 +146,74 @@ export default function Home() {
         )}
       </nav>
 
-      {/* MOBILE HINT */}
+      {/* ── MOBILE HINT ── */}
       {isMobile && (
-        <div className="max-w-5xl mx-auto px-6 mb-4">
-          <div className="rounded-xl border border-yellow-400/30 bg-yellow-400/5 px-4 py-3 text-center text-xs text-yellow-300">
+        <div className="max-w-5xl mx-auto px-6 mb-2">
+          <div className="rounded-xl border border-yellow-400/20 bg-yellow-400/5 px-4 py-2.5 text-center text-xs text-yellow-300/80">
             SlapBack is made for desktop. Open it on your Mac for the full experience.
           </div>
         </div>
       )}
 
-      {/* HERO */}
-      <header className="pt-8 pb-12 md:pt-16 md:pb-16 px-6 text-center max-w-4xl mx-auto">
-        <motion.h1
-          initial={{ opacity: 0, y: 16 }}
+      {/* ── 1. HOOK ── */}
+      <header className="pt-10 md:pt-20 pb-12 md:pb-16 px-6 text-center max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl sm:text-5xl md:text-7xl font-black leading-[0.95] tracking-tight"
         >
-          Choose a sound.
-          <br />
-          Pick a trigger.
-          <br />
-          <span className="text-red-400">Make your Mac scream.</span>
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mt-5 text-zinc-400 text-base md:text-lg max-w-xl mx-auto leading-relaxed"
-        >
-          Pick a sound. Choose what triggers it. Then slap your desk, press a key, or spam your
-          clicks — and watch your screen talk back.
-        </motion.p>
+          {/* Eyebrow */}
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-800 bg-zinc-950 text-xs text-zinc-500 font-semibold mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+            Web app — no install required
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl md:text-[4.5rem] font-black leading-[0.93] tracking-tighter">
+            Choose a sound.
+            <br />
+            Pick a trigger.
+            <br />
+            <span className="text-red-400">Make your Mac scream.</span>
+          </h1>
+          <p className="mt-5 text-zinc-400 text-base md:text-xl max-w-lg mx-auto leading-relaxed">
+            Tap your desk, press a key, or spam your clicks —{" "}
+            <span className="text-white font-semibold">SlapBack reacts instantly.</span>
+          </p>
+
+          <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href="#app"
+              className="px-7 py-3.5 rounded-2xl bg-red-500 text-white font-bold text-sm hover:bg-red-400 transition-all shadow-lg shadow-red-500/30 active:scale-95"
+            >
+              Try it now →
+            </a>
+            <a
+              href="#install"
+              className="px-7 py-3.5 rounded-2xl border border-zinc-700 text-zinc-300 font-semibold text-sm hover:border-zinc-500 hover:text-white transition-all active:scale-95"
+            >
+              ⬇ Install as app
+            </a>
+          </div>
+        </motion.div>
       </header>
 
-      {/* MINI DEMO CARDS */}
-      <div className="max-w-3xl mx-auto px-6 mb-10 grid grid-cols-1 md:grid-cols-3 gap-3">
-        {DEMO_CARDS.map((d, i) => (
-          <motion.div
-            key={d.action}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 + i * 0.05 }}
-            className="flex items-center justify-between px-4 py-3 rounded-xl border border-zinc-800 bg-zinc-950"
-          >
-            <div className="flex items-center gap-3 text-sm">
-              <span className="text-xl leading-none">{d.icon}</span>
-              <span className="font-semibold text-zinc-200">{d.action}</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs">
-              <span className="text-zinc-600">{d.arrow}</span>
-              <span className="text-red-400 font-bold">{d.result}</span>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+      {/* ── 2. DEMO ── */}
+      <section className="pb-16 px-4">
+        <HeroDemo />
+      </section>
 
-      {/* APP */}
-      <main className="max-w-3xl mx-auto px-4 md:px-6 pb-16">
+      {/* ── 3. APP INTERACTIVE ── */}
+      <section id="app" className="max-w-3xl mx-auto px-4 md:px-6 pb-20">
+        {/* Section label */}
+        <div className="text-center mb-8">
+          <p className="text-xs font-bold uppercase tracking-widest text-zinc-600 mb-2">
+            Try it
+          </p>
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight">
+            Pick a sound. Pick a trigger. Go.
+          </h2>
+        </div>
+
         <AppShell
           isActive={isActive}
           isMuted={isMuted}
@@ -248,7 +239,7 @@ export default function Home() {
             />
           </div>
 
-          {/* STEP 3 — start chaos */}
+          {/* Step 3 — Start */}
           <div className="mt-7 pt-6 border-t border-zinc-900 space-y-4">
             <div className="flex items-center gap-2.5">
               <div className="w-6 h-6 rounded-full bg-white text-black text-xs font-black flex items-center justify-center">
@@ -268,9 +259,8 @@ export default function Home() {
                       🚫 Microphone access was blocked.
                     </p>
                     <p className="text-xs text-zinc-500 leading-relaxed">
-                      Click the lock icon in your address bar and allow microphone, then click Stop
-                      and Start again. Or use a keyboard / click trigger instead — they work
-                      without mic.
+                      Click the lock icon in your address bar, allow microphone, then press Stop
+                      and Start again. Or switch to a keyboard / click trigger — no mic needed.
                     </p>
                   </div>
                 ) : (
@@ -287,7 +277,7 @@ export default function Home() {
                           : "🟢"}
                       </span>
                     </div>
-                    <div className="h-3 rounded-full bg-zinc-800 overflow-hidden">
+                    <div className="h-2.5 rounded-full bg-zinc-800 overflow-hidden">
                       <motion.div
                         className="h-full rounded-full bg-gradient-to-r from-green-400 via-yellow-400 to-red-500"
                         animate={{ width: `${Math.min(100, micDetection.volumeLevel * 100)}%` }}
@@ -308,6 +298,9 @@ export default function Home() {
                         className="w-full"
                       />
                     </div>
+                    <p className="text-[11px] text-zinc-700 text-center">
+                      No audio is recorded. Local volume detection only.
+                    </p>
                   </>
                 )}
               </div>
@@ -319,7 +312,7 @@ export default function Home() {
                   🎤 SlapBack will request mic access when you press Start.
                 </p>
                 <p className="text-[11px] text-zinc-600 mt-1">
-                  No audio is recorded. Local volume detection only.
+                  No audio is recorded. Local detection only.
                 </p>
               </div>
             )}
@@ -327,9 +320,9 @@ export default function Home() {
             {(showKeyboardNotice || showSpamClickNotice || showMouseShakeNotice) && (
               <div className="px-4 py-3 rounded-xl bg-zinc-900/50 border border-zinc-800 text-center">
                 <p className="text-xs text-zinc-400">
-                  {showKeyboardNotice && "⌨️ Press your trigger key in this window."}
-                  {showSpamClickNotice && "🖱️ Click anywhere 6 times in 2 seconds."}
-                  {showMouseShakeNotice && "🐭 Shake your mouse fast inside this window."}
+                  {showKeyboardNotice && "⌨️ Press your trigger key while this window is focused."}
+                  {showSpamClickNotice && "🖱️ Click anywhere in this window 6 times in 2 seconds."}
+                  {showMouseShakeNotice && "🐭 Shake your mouse rapidly inside this window."}
                 </p>
               </div>
             )}
@@ -338,64 +331,71 @@ export default function Home() {
           </div>
         </AppShell>
 
-        {/* Trust strip */}
+        {/* Mini trust strip */}
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
           {[
             "🔒 No audio recording",
             "⌨️ No keylogging",
             "🌐 Runs locally",
-            "📦 No install required",
             "🎤 Mic optional",
           ].map((b) => (
-            <span key={b} className="text-[11px] text-zinc-600">
-              {b}
-            </span>
+            <span key={b} className="text-[11px] text-zinc-700">{b}</span>
           ))}
         </div>
-      </main>
+      </section>
 
-      {/* INSTALL SECTION */}
-      <section id="install" className="py-20 px-6 border-t border-zinc-900">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <p className="text-xs font-bold uppercase tracking-widest text-zinc-600">
-            Install
-          </p>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight">Install it like an app.</h2>
-          <p className="text-zinc-400 max-w-xl mx-auto leading-relaxed">
-            Keep SlapBack in your Dock and launch it like a real app. No DMG. No App Store. Just
-            install the web app.
-          </p>
-          <div className="flex justify-center pt-2">
+      {/* ── 4. TRUST ── */}
+      <TrustSection />
+
+      {/* ── 5. INSTALL ── */}
+      <section id="install" className="py-24 px-4 border-t border-zinc-900">
+        <div className="max-w-3xl mx-auto text-center space-y-8">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-zinc-600 mb-3">
+              Install
+            </p>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight">
+              Install it like an app.
+            </h2>
+            <p className="text-zinc-400 mt-4 max-w-md mx-auto leading-relaxed">
+              Keep SlapBack in your Dock and launch it like a real app.
+              No DMG. No App Store. Just install the web app.
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center gap-3">
             <InstallButton />
+            <p className="text-xs text-zinc-600">
+              Works best in Chrome, Edge, or Safari → Add to Dock on Mac.
+            </p>
           </div>
-          <p className="text-xs text-zinc-600">
-            Works best in Chrome, Edge, or Safari → Add to Dock on Mac.
-          </p>
+
+          {/* How it looks */}
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
+            {[
+              { icon: "🪟", title: "Standalone window", body: "Opens without browser chrome — full app feeling." },
+              { icon: "🚀", title: "Dock shortcut", body: "Launch from your Dock like any other app." },
+              { icon: "⚡", title: "Instant load", body: "Cached assets. Opens in under a second." },
+            ].map((f) => (
+              <div key={f.title} className="rounded-2xl border border-zinc-900 bg-zinc-950 p-5 space-y-2">
+                <div className="text-2xl">{f.icon}</div>
+                <p className="text-sm font-bold text-white">{f.title}</p>
+                <p className="text-xs text-zinc-500 leading-relaxed">{f.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* PRIVACY/TRUST ZONE */}
-      <section className="py-16 px-6 border-t border-zinc-900">
-        <div className="max-w-2xl mx-auto rounded-3xl border border-zinc-900 bg-gradient-to-b from-zinc-950 to-black p-8 md:p-10 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-green-500/10 border border-green-500/30 flex items-center justify-center text-lg">
-              🔒
-            </div>
-            <h3 className="text-xl font-black">No keylogging. No audio recording. Local only.</h3>
-          </div>
-          <p className="text-sm text-zinc-400 leading-relaxed">
-            SlapBack never records your microphone. It only detects sudden volume peaks locally in
-            your browser. It never reads what you type. It only reacts to selected keys and
-            interaction patterns while the app is open.
-          </p>
-        </div>
-      </section>
-
+      {/* ── 6. PRICING ── */}
       <Pricing />
+
+      {/* ── 7. FAQ ── */}
       <FAQ />
 
+      {/* ── FOOTER ── */}
       <footer className="border-t border-zinc-900 py-10 px-4 text-center space-y-3">
-        <div className="text-lg font-black">
+        <div className="text-xl font-black">
           <span className="text-red-400">Slap</span>Back
         </div>
         <div className="flex justify-center gap-6 text-xs text-zinc-700">
