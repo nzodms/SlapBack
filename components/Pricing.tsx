@@ -25,7 +25,7 @@ export default function Pricing() {
             Go further.
           </h2>
           <p className="text-zinc-500 mt-3 text-lg">
-            Paiement unique. Pas d'abonnement. Pas de bullshit.
+            Paiement unique. Pas d&apos;abonnement. Pas de bullshit.
           </p>
         </div>
 
@@ -91,7 +91,7 @@ export default function Pricing() {
         </div>
 
         <p className="text-center text-xs text-zinc-700">
-          Les paiements seront traités via Stripe. Aucune donnée audio n'est collectée.
+          Les paiements seront traités via Stripe. Aucune donnée audio n&apos;est collectée.
         </p>
       </div>
     </section>

@@ -264,7 +264,7 @@ export default function Home() {
                   🎤 SlapBack demandera accès à ton micro au démarrage.
                 </p>
                 <p className="text-xs text-zinc-600">
-                  Aucun audio n'est enregistré — détection locale uniquement.
+                  Aucun audio n&apos;est enregistré — détection locale uniquement.
                 </p>
               </div>
             )}
