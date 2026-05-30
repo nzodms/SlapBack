@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
+
 
 import { SOUNDS } from "@/lib/sounds";
 import {
@@ -393,13 +393,7 @@ export default function OnboardingDemo() {
                       <p className="text-center text-xs text-zinc-500">
                         That was the demo. Get the real thing on your Mac:
                       </p>
-                      <DownloadButton variant="hero" withGuideLink={false} />
-                      <Link
-                        href="/playground"
-                        className="inline-flex items-center justify-center px-4 py-3 rounded-2xl border border-zinc-800 text-zinc-400 text-sm font-semibold hover:border-zinc-600 hover:text-white transition-all"
-                      >
-                        Keep exploring the web demo →
-                      </Link>
+                      <DownloadButton variant="hero" withGuideLink />
                     </motion.div>
                   )}
 

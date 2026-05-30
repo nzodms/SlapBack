@@ -29,11 +29,10 @@ export default function Home() {
           <span className="text-red-400">Slap</span>Back
         </span>
         <div className="hidden md:flex items-center gap-7 text-sm text-zinc-500">
-          <a href="#demo" className="hover:text-white transition-colors">Demo</a>
           <a href="#download" className="hover:text-white transition-colors">Download</a>
           <Link href="/install" className="hover:text-white transition-colors">Install guide</Link>
           <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-          <Link href="/playground" className="hover:text-white transition-colors">Playground</Link>
+          <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
         </div>
       </nav>
 
@@ -190,7 +189,6 @@ export default function Home() {
         </div>
         <div className="flex flex-wrap justify-center gap-6 text-xs text-zinc-700">
           <Link href="/install" className="hover:text-zinc-400 transition-colors">Install guide</Link>
-          <Link href="/playground" className="hover:text-zinc-400 transition-colors">Playground</Link>
           <Link href="/privacy" className="hover:text-zinc-400 transition-colors">Privacy</Link>
           <Link href="/terms" className="hover:text-zinc-400 transition-colors">Terms</Link>
           <a href="#faq" className="hover:text-zinc-400 transition-colors">FAQ</a>
