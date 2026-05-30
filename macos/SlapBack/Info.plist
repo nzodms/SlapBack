@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>SlapBack</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.slapback.app</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>LSUIElement</key>
+    <true/>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+
+    <!-- Microphone usage — spike detection only, no recording -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>SlapBack uses your microphone to detect desk taps via volume spikes. No audio is recorded or stored.</string>
+
+    <!-- Accessibility usage — global key/click detection -->
+    <key>NSAccessibilityUsageDescription</key>
+    <string>SlapBack uses Accessibility to detect your configured trigger key or click pattern system-wide. It only listens for the specific trigger you chose — nothing else is read or logged.</string>
+
+    <!-- Minimum macOS version -->
+    <key>LSMinimumSystemVersion</key>
+    <string>13.0</string>
+</dict>
+</plist>

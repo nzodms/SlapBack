@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Required for CGEvent tap (global key/click detection) -->
+    <key>com.apple.security.accessibility</key>
+    <true/>
+
+    <!-- Required for AVAudioEngine microphone input (optional preset only) -->
+    <key>com.apple.security.device.audio-input</key>
+    <true/>
+
+    <!-- App Sandbox disabled — menu bar app needs global event access -->
+    <key>com.apple.security.app-sandbox</key>
+    <false/>
+</dict>
+</plist>
