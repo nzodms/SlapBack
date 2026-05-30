@@ -4,18 +4,17 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-import { usePWAInstall } from "@/hooks/usePWAInstall";
-
 import OnboardingDemo from "@/components/OnboardingDemo";
 import HowItWorks from "@/components/HowItWorks";
 import WhyPeople from "@/components/WhyPeople";
 import TrustSection from "@/components/TrustSection";
-import InstallButton from "@/components/InstallButton";
+import DownloadButton from "@/components/DownloadButton";
+import InstallGuide from "@/components/InstallGuide";
 import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
+import { DOWNLOAD_READY, TRUST_LINE, SOURCE_NOTE } from "@/lib/download";
 
 export default function Home() {
-  const { isStandalone } = usePWAInstall();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -31,16 +30,11 @@ export default function Home() {
         </span>
         <div className="hidden md:flex items-center gap-7 text-sm text-zinc-500">
           <a href="#demo" className="hover:text-white transition-colors">Demo</a>
-          <a href="#install" className="hover:text-white transition-colors">Install</a>
+          <a href="#download" className="hover:text-white transition-colors">Download</a>
+          <Link href="/install" className="hover:text-white transition-colors">Install guide</Link>
           <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
           <Link href="/playground" className="hover:text-white transition-colors">Playground</Link>
         </div>
-        {isStandalone && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-green-400 text-[10px] font-bold uppercase tracking-widest">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-            App mode
-          </span>
-        )}
       </nav>
 
       {isMobile && (
@@ -66,7 +60,7 @@ export default function Home() {
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-800 bg-zinc-950/80 backdrop-blur text-xs text-zinc-400 font-semibold mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-            App mode ready — installs in one click
+            Native Mac app — {DOWNLOAD_READY ? "download now" : "beta coming soon"}
           </div>
 
           <h1 className="text-5xl sm:text-6xl md:text-8xl font-black leading-[0.9] tracking-tighter">
@@ -80,23 +74,21 @@ export default function Home() {
             <span className="text-white font-semibold">reactive little chaos machine.</span>
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="mt-8 flex justify-center">
+            <DownloadButton variant="hero" withGuideLink />
+          </div>
+
+          <div className="mt-5">
             <a
               href="#demo"
-              className="px-7 py-3.5 rounded-2xl bg-red-500 text-white font-bold text-sm hover:bg-red-400 transition-all shadow-lg shadow-red-500/30 active:scale-95"
+              className="text-sm text-zinc-500 hover:text-white transition-colors underline underline-offset-4"
             >
-              Start demo →
-            </a>
-            <a
-              href="#install"
-              className="px-7 py-3.5 rounded-2xl border border-zinc-700 text-zinc-300 font-semibold text-sm hover:border-zinc-500 hover:text-white transition-all active:scale-95"
-            >
-              ⬇ Install SlapBack
+              Or try the free web demo →
             </a>
           </div>
 
           <p className="mt-6 text-xs text-zinc-500">
-            No recording. No keylogging. Runs locally. Installable as a web app.
+            No recording. No keylogging. Runs locally. {TRUST_LINE}
           </p>
         </motion.div>
       </header>
@@ -115,41 +107,49 @@ export default function Home() {
       {/* ── TRUST ── */}
       <TrustSection />
 
-      {/* ── INSTALL ── */}
-      <section id="install" className="py-24 px-4 border-t border-zinc-900">
+      {/* ── DOWNLOAD ── */}
+      <section id="download" className="py-24 px-4 border-t border-zinc-900">
         <div className="max-w-2xl mx-auto text-center space-y-8">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-zinc-600 mb-3">Install</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-zinc-600 mb-3">Download</p>
             <h2 className="text-4xl md:text-5xl font-black tracking-tight">
-              Install it. Keep it in your Dock.
+              Download the Mac app.
             </h2>
             <p className="text-zinc-400 mt-4 leading-relaxed max-w-md mx-auto">
-              SlapBack installs as a web app. No DMG. No App Store. Open it like a real app when you
-              want your Mac to react.
+              Direct Mac download. No App Store required. Runs from your menu bar and reacts to
+              triggers system-wide — not just in a browser tab.
             </p>
           </div>
 
-          <div className="flex flex-col items-center gap-3">
-            <InstallButton />
+          <div className="flex justify-center">
+            <DownloadButton variant="hero" withGuideLink />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left max-w-lg mx-auto pt-2">
-            <div className="rounded-2xl border border-zinc-900 bg-zinc-950 p-4 space-y-1.5">
-              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Chrome / Edge</p>
-              <p className="text-xs text-zinc-500 leading-relaxed">
-                Click the install icon in the address bar.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-zinc-900 bg-zinc-950 p-4 space-y-1.5">
-              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Safari Mac</p>
-              <p className="text-xs text-zinc-500 leading-relaxed">Share → Add to Dock.</p>
-            </div>
+          <p className="text-[11px] text-zinc-600">{TRUST_LINE}</p>
+
+          {/* Quick 6-step preview */}
+          <div className="text-left max-w-lg mx-auto pt-4">
+            <p className="text-xs font-bold uppercase tracking-widest text-zinc-600 mb-3 text-center">
+              How install works
+            </p>
+            <InstallGuide compact />
           </div>
+
+          {/* Honest coming-soon explainer */}
+          {!DOWNLOAD_READY && (
+            <div className="rounded-3xl border border-yellow-400/15 bg-yellow-400/5 p-6 text-left space-y-2 max-w-lg mx-auto">
+              <p className="text-sm font-bold text-yellow-300">
+                Why does the button say “coming soon”?
+              </p>
+              <p className="text-xs text-zinc-400 leading-relaxed">{SOURCE_NOTE}</p>
+            </div>
+          )}
 
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] text-zinc-600 pt-2">
-            <span>⚡ Works while SlapBack is open</span>
-            <span>🚫 No background access</span>
-            <span>🔒 No system-level keylogging</span>
+            <span>🚫 No recording</span>
+            <span>🚫 No keylogging</span>
+            <span>📡 No network</span>
+            <span>🔒 100% local</span>
           </div>
         </div>
       </section>
@@ -167,21 +167,18 @@ export default function Home() {
             Ready to make your Mac scream?
           </h3>
           <p className="text-sm text-zinc-400 max-w-sm mx-auto">
-            Start the demo, then keep SlapBack in your Dock.
+            Download the Mac app, or try the free web demo first.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <div className="flex justify-center pt-2">
+            <DownloadButton variant="hero" withGuideLink />
+          </div>
+          <div className="pt-1">
             <a
               href="#demo"
-              className="px-7 py-3.5 rounded-2xl bg-red-500 text-white font-bold text-sm hover:bg-red-400 transition-all shadow-lg shadow-red-500/30 active:scale-95"
+              className="text-sm text-zinc-500 hover:text-white transition-colors underline underline-offset-4"
             >
-              Start demo →
+              Or try the free web demo →
             </a>
-            <Link
-              href="/playground"
-              className="px-7 py-3.5 rounded-2xl border border-zinc-700 text-zinc-300 font-semibold text-sm hover:border-zinc-500 hover:text-white transition-all active:scale-95"
-            >
-              Open full playground
-            </Link>
           </div>
         </div>
       </section>
@@ -191,7 +188,8 @@ export default function Home() {
         <div className="text-xl font-black">
           <span className="text-red-400">Slap</span>Back
         </div>
-        <div className="flex justify-center gap-6 text-xs text-zinc-700">
+        <div className="flex flex-wrap justify-center gap-6 text-xs text-zinc-700">
+          <Link href="/install" className="hover:text-zinc-400 transition-colors">Install guide</Link>
           <Link href="/playground" className="hover:text-zinc-400 transition-colors">Playground</Link>
           <Link href="/privacy" className="hover:text-zinc-400 transition-colors">Privacy</Link>
           <Link href="/terms" className="hover:text-zinc-400 transition-colors">Terms</Link>

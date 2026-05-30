@@ -16,7 +16,7 @@ import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { useMicTapDetection } from "@/hooks/useMicTapDetection";
 import { useKeyboardTrigger } from "@/hooks/useKeyboardTrigger";
 import { useSpamClick } from "@/hooks/useSpamClick";
-import InstallButton from "@/components/InstallButton";
+import DownloadButton from "@/components/DownloadButton";
 
 type Step = 0 | 1 | 2 | 3;
 
@@ -388,16 +388,17 @@ export default function OnboardingDemo() {
                     <motion.div
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="flex flex-col sm:flex-row gap-2"
+                      className="flex flex-col gap-2"
                     >
-                      <div className="flex-[2]">
-                        <InstallButton />
-                      </div>
+                      <p className="text-center text-xs text-zinc-500">
+                        That was the demo. Get the real thing on your Mac:
+                      </p>
+                      <DownloadButton variant="hero" withGuideLink={false} />
                       <Link
                         href="/playground"
-                        className="flex-1 inline-flex items-center justify-center px-4 py-3.5 rounded-2xl border border-zinc-800 text-zinc-400 text-sm font-semibold hover:border-zinc-600 hover:text-white transition-all"
+                        className="inline-flex items-center justify-center px-4 py-3 rounded-2xl border border-zinc-800 text-zinc-400 text-sm font-semibold hover:border-zinc-600 hover:text-white transition-all"
                       >
-                        Full playground →
+                        Keep exploring the web demo →
                       </Link>
                     </motion.div>
                   )}

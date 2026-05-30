@@ -1,31 +1,36 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
 const FAQS = [
   {
+    q: "C'est quoi SlapBack, exactement ?",
+    a: "Une vraie app macOS native qui vit dans ta barre de menu. Elle détecte tes triggers (touche, clics, tap sur le bureau) partout sur ton système et fait réagir ton Mac. Le site propose aussi une démo web gratuite, mais le vrai produit est l'app Mac.",
+  },
+  {
+    q: "Comment je l'installe ?",
+    a: "Télécharge le .dmg, ouvre-le, glisse SlapBack dans Applications, lance-le et autorise les permissions. Le guide complet est sur la page Install.",
+  },
+  {
+    q: "Pourquoi le bouton dit parfois “coming soon” ?",
+    a: "L'app Mac native est terminée côté code source, mais le build téléchargeable (.dmg signé/notarisé) est en cours de packaging. En attendant, tu peux rejoindre la beta pour recevoir le lien dès qu'il est prêt — ou compiler depuis Xcode via le README macOS.",
+  },
+  {
     q: "Est-ce que ça enregistre mon micro ?",
-    a: "Non, jamais. Zéro octet ne quitte ton navigateur. Le micro est utilisé en lecture seule pour détecter des pics de volume soudains — comme un tap sur le bureau.",
+    a: "Non, jamais. Le micro sert uniquement à détecter des pics de volume (comme un tap sur le bureau) pour les presets concernés. Aucun audio n'est enregistré, stocké, ou envoyé. Tout est local.",
   },
   {
-    q: "Est-ce que ça fonctionne sur mobile ?",
-    a: "Oui. La détection tap via micro marche très bien sur mobile. Les déclencheurs clavier nécessitent un clavier physique.",
+    q: "Est-ce que ça enregistre ce que je tape ?",
+    a: "Non. SlapBack n'écoute que le trigger que tu as configuré (ex: la barre Espace ou Caps Lock). Il n'y a aucun historique des touches, aucun keylogging, aucun texte stocké.",
   },
   {
-    q: "Est-ce que j'ai besoin d'installer quelque chose ?",
-    a: "Non. Ouvre l'URL, c'est tout. Aucun téléchargement, aucune extension, aucun privilège macOS.",
+    q: "Pourquoi il faut la permission Accessibilité ?",
+    a: "macOS exige cette permission pour qu'une app détecte les touches et clics en dehors de sa propre fenêtre. SlapBack l'utilise uniquement pour repérer ton trigger configuré, rien d'autre.",
   },
   {
-    q: "Ça ralentit mon ordinateur ?",
-    a: "À peine. Environ autant qu'un GIF animé. L'analyse audio est faite via Web Audio API, nativement dans le navigateur.",
-  },
-  {
-    q: "Que se passe-t-il si mon navigateur bloque le micro ?",
-    a: "Tous les autres déclencheurs (clavier, clics, souris) fonctionnent sans micro. La version sans micro est entièrement opérationnelle.",
-  },
-  {
-    q: "C'est quoi la différence avec une vraie app Mac ?",
-    a: "Une vraie app Mac peut détecter les taps même quand le navigateur est en arrière-plan, et peut intercepter les raccourcis globaux. SlapBack Web fonctionne uniquement quand la page est ouverte et au premier plan — ce qui est parfait pour une V1.",
+    q: "C'est quoi la différence avec la démo web ?",
+    a: "La démo web ne fonctionne que dans l'onglet ouvert et au premier plan. L'app Mac détecte les triggers partout sur ton système, même quand tu es dans une autre app, et affiche l'overlay par-dessus tout.",
   },
 ];
 
@@ -77,6 +82,14 @@ export default function FAQ() {
           {FAQS.map((item) => (
             <FAQItem key={item.q} q={item.q} a={item.a} />
           ))}
+        </div>
+        <div className="text-center pt-2">
+          <Link
+            href="/install"
+            className="text-sm text-zinc-500 hover:text-white transition-colors underline underline-offset-4"
+          >
+            See the full install guide →
+          </Link>
         </div>
       </div>
     </section>
